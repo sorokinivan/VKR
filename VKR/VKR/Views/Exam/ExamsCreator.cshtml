@@ -1,0 +1,80 @@
+﻿@using VKR.Models.ExamModels
+@(Html.Kendo().TextBox()
+        .Name("examName")
+        .Placeholder("Название экзамена")
+        .HtmlAttributes(new { style = "width:20%"})
+  )
+  <div>
+        @(Html.Kendo().DropDownList()
+          .Name("competency")
+          .OptionLabel("Выберите компетенции...")
+          .DataValueField("Id")
+        .DataTextField("CompetencyName")
+        .HtmlAttributes(new { style = "width:20%"})
+        .BindTo((System.Collections.Generic.List<Competency>)ViewBag.Competencies)
+    )
+  </div>
+  <div>
+      @(Html.Kendo().NumericTextBox()
+        .Name("threshold")
+        .Placeholder("Пороговое значение")
+        .HtmlAttributes(new { style = "width:20%"})
+  )
+  </div>
+
+
+@(Html.Kendo().Button()
+    .Name("newCompetencyButton")
+    .HtmlAttributes( new {type = "button"} )
+    .Content("Продолжить")
+    .HtmlAttributes(new { style = "width:20%"})
+    .Events(e => e
+            .Click("newCompetencyClick")
+        )
+)
+<div id="competenciesInputs">
+    <div id="indicatorsInputs"></div>
+</div>
+
+<style>
+    .competencyInput {
+        display: flex;
+        flex-flow: column wrap;
+        margin-top: 20px;
+    }
+</style>
+<script>
+    var competenciesCount = 0;
+
+    function newCompetencyClick(e){
+        var competency = $("#competency").data("kendoDropDownList").value();
+        var examName = $('#examName').data('kendoTextBox').value();
+        var threshold = $('#threshold').data('numericTextBox').value();
+        localStorage.setItem('competencyId', Number(competency));
+        localStorage.setItem('examName', examName);
+        localStorage.setItem('threshold', threshold);
+        window.location.href = '/Exam/ExamQuestionsCreator/';
+        //var urlPath = '@Url.Action("ExamQuestionsCreator", "Exam")';
+        //var competency = $("#competency").data("kendoDropDownList").value();
+        //var examName = $('#examName').data('kendoTextBox').value();
+        //var userModel = {
+        //        "ExamName": examName,
+        //        "CompetencyId": Number(competency)
+        //        };
+        //    sendRequest(urlPath, "POST", JSON.stringify(userModel), "html", onSuccess, onError, window.location.pathname);
+     //   competenciesCount = competenciesCount +1;
+     //   //'<div class="listing listing_ad job"><h4><a>Some text</a></h4> </div>'
+     //   var newDiv = $('<div class="competenciesDiv'+competenciesCount+'"><input type="text" class="competencyInput" id="competency"><input type="button" value="Добавить новый индикатор" onclick="newIndicatorClick('+competenciesCount+')"> </div>');
+     //// var new_input="<div><input type='text' class='competencyInput' id='competency"+competenciesCount+"'><input type='button' value='Добавить новый индикатор' onclick='newIndicatorClick()'></div>";
+     // $('#competenciesInputs').append(newDiv);
+
+    }
+
+    function newIndicatorClick(competenciesCount){
+        debugger;
+        var newDiv = $('<div class="indicatorsDiv"><input type="text" label="Новый индикатор" class="competencyInput" id="competency"> </div>');
+     // var new_input="<div><input type='text' class='competencyInput' id='competency"+competenciesCount+"'><input type='button' value='Добавить новый индикатор' onclick='newIndicatorClick()'></div>";
+     var divName =  '#competenciesDiv'+competenciesCount;
+     $(divName).append(newDiv);
+    }
+</script>

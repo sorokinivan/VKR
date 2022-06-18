@@ -1,0 +1,80 @@
+﻿@using Kendo.Mvc.UI
+<script src="~/scripts/commonScripts.js"></script>
+<div>
+    @(Html.Kendo().Grid<VKR.Models.RequestModels.RequestViewModel>()
+    .Name("UserRequestsGrid")
+    .Columns(columns =>
+    {
+    columns.Bound(c=>c.Id).Visible(false);
+    columns.Bound(c => c.ExamId).Visible(false);
+    columns.Bound(c => c.ExamName).Title("Название экзамена");
+    columns.Bound(c=>c.UserId).Visible(false);
+    columns.Bound(c=>c.UserName).Visible(false);
+    columns.Bound(c=>c.Status).Title("Статус заявки");
+    })
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Model(model => model.Id(p=>p.Id))
+    .Model(model => model.Field(p=>p.ExamId))
+    .Model(model => model.Field(p=>p.ExamName))
+    .Model(model => model.Field(p=>p.UserId))
+    .Model(model => model.Field(p=>p.UserName))
+    .Model(model => model.Field(p=>p.Status))
+    .Read(read => read.Action("GetUserRequests", "Request"))
+    )
+    .Pageable(p => p.Enabled(true))
+    )
+
+    @(Html.Kendo().Button()
+    .Name("newRequestButton")
+    .HtmlAttributes( new {type = "button"} )
+    .Content("Создать новую заявку")
+    .Events(e => e.Click("initWindow"))
+)
+
+@(Html.Kendo().Window()
+    .Name("newRequestWindow")
+    .Title("Новая заявка") //title
+    .Visible(false)
+    .Draggable(true)
+    .Modal(true)
+    .Width(800)
+    .Events(e => e.Open("onOpenWindow"))
+    )
+</div>
+
+<script>
+  function initWindow(e){
+                debugger;
+                var createWindow = $('#newRequestWindow').data('kendoWindow');
+                 createWindow.center().open();
+
+            }
+
+                function createRequestClick(e){
+                    debugger;
+                    var grid = $("#ExamsGrid").data("kendoGrid");
+var item = grid.dataItem($(e.target).closest("tr"));
+$.ajax({
+            url: '@Url.Action("SaveRequest", "Request")',
+            type: 'POST',
+            data: { examId:item.ExamId },
+            success: function() {
+            }
+                });
+        console.log(1);
+    }
+
+            function onOpenWindow(e){
+            
+                $.ajax({
+            url: '@Url.Action("NewRequestPartial", "Request")',
+            type: 'POST',
+            success: function(result) {
+                debugger;
+                $('#newRequestWindow').html(result);
+            }
+                });
+            }
+    
+</script>

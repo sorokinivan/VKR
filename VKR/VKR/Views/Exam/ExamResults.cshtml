@@ -1,0 +1,30 @@
+﻿@using Kendo.Mvc.UI
+<script src="~/scripts/commonScripts.js"></script>
+<div>
+    @(Html.Kendo().Grid<VKR.Models.ProfessionalGradeModels.ExamResultViewData>()
+    .Name("ExamResultsGrid")
+    .Columns(columns =>
+    {
+    columns.Bound(c=>c.Id).Visible(false);
+    columns.Bound(c => c.O).Title("O");
+    columns.Bound(c => c.D).Title("D");
+    columns.Bound(c => c.H).Title("H");
+    columns.Bound(c => c.R).Title("R");
+    
+    @*for(int i = 0; i < ViewBag.CompetenciesCount; i++){
+        columns.Bound(c=>c.Grades[i].Grade);
+        columns.Bound(c=>c.Grades[i].StringGrade);
+    }*@
+    })
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Model(model => model.Id(p=>p.Id))
+    .Model(model => model.Field(p=>p.O))
+    .Model(model => model.Field(p=>p.D))
+    .Model(model => model.Field(p=>p.H))
+    .Model(model => model.Field(p=>p.R))
+    .Read(read => read.Action("GetResultsData", "Exam"))
+    )
+    .Pageable(p => p.Enabled(true))
+    )
+</div>

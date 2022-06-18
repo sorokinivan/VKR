@@ -1,0 +1,41 @@
+﻿@(Html.Kendo().TextBox()
+        .Name("competencyName")
+  )
+@(Html.Kendo().Button()
+    .Name("newCompetencyButton")
+    .HtmlAttributes( new {type = "button"} )
+    .Content("Добавить новую компетенцию")
+    .Events(e => e
+            .Click("newCompetencyClick")
+        )
+)
+<script>
+    function newCompetencyClick(){
+            var name = $('#competencyName').data('kendoTextBox').value();
+                var urlPath = '@Url.Action("CreateNewCompetency", "Exam")';
+                var data = { name:name };
+                $.ajax({
+            url: '@Url.Action("CreateNewCompetency", "Exam")',
+            type: 'POST',
+            data: { name:name },
+            success: onSuccess,
+        error: onError,
+        statusCode: {
+            401: function () {
+                $("#details").empty();
+                redirectionToLoginPage(currentUrl);
+            }
+        }
+
+                });
+                //sendRequest(urlPath, "POST", data, "html", onSuccess, onError, window.location.pathname);
+    }
+
+    function onSuccess() {
+            showPopupMessage("Индикатор успешно создан", 'success');
+        }
+
+         function onError() {
+             showPopupMessage("Индиктор не создан", 'error');
+        }
+</script>

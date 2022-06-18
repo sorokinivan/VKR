@@ -1,0 +1,205 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link href="https://cdn.kendostatic.com/2022.1.412/styles/kendo.material-main.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.kendostatic.com/2022.1.412/js/jquery.min.js"></script>
+    <script src="https://cdn.kendostatic.com/2022.1.412/js/jszip.min.js"></script>
+    <script src="https://cdn.kendostatic.com/2022.1.412/js/kendo.all.min.js"></script>
+    <script src="https://cdn.kendostatic.com/2022.1.412/js/kendo.aspnetmvc.min.js"></script>
+    <script src="~/scripts/commonScripts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+</head>
+<style>
+
+    .header {
+        position: sticky;
+        top: 0;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .container__main {
+        /* Take the remaining height */
+        flex-grow: 1;
+        /* Layout the left sidebar, main content and right sidebar */
+        display: flex;
+        flex-direction: row;
+    }
+
+    .container__left {
+        width: 25%;
+        background-color: aliceblue;
+    }
+
+    .container__middle {
+        /* Take the remaining width */
+        flex-grow: 1;
+        /*background-color: lightgoldenrodyellow;*/
+    }
+
+    .container__right {
+        width: 20%;
+        background-color: aliceblue;
+    }
+
+    .dropdown {
+        /* Border */
+        border: 1px solid rgba(0, 0, 0, 0.3);
+        display: flex;
+        /* Reset list styles */
+        list-style-type: none;
+        background-color: antiquewhite;
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    }
+
+        .dropdown li {
+            /* Spacing */
+            padding: 8px;
+            /* Used to position the sub dropdown */
+            position: relative;
+            text-align: center;
+            width: 100%;
+        }
+
+
+
+        /* The sub dropdown */
+        .dropdown ul {
+            /* Border */
+            border: 1px solid rgba(0, 0, 0, 0.3);
+            /* Hidden by default */
+            display: none;
+            /* Absolute position */
+            left: 0;
+            position: absolute;
+            top: 100%;
+            /* Reset styles */
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            /* Width */
+            width: inherit;
+        }
+
+            /* The second level sub dropdown */
+            .dropdown ul ul {
+                left: 100%;
+                position: absolute;
+                top: 0;
+            }
+
+        /* Change background color of list item when being hovered */
+        .dropdown li:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+            /* Show the direct sub dropdown when hovering the list item */
+            .dropdown li:hover > ul {
+                display: block;
+            }
+
+</style>
+<body>
+    <header class="header">
+        <ul class="dropdown">
+            <li><div><a href="@Url.Action("Index","Home")" class="site_title">Home</a></div></li>
+            @{
+                if (User.Identity.IsAuthenticated)
+                {
+                    <li>
+
+                        <div>Экзамены</div>
+                        <!-- First level sub dropdown -->
+                    <ul>
+                    <li><div><a href="@Url.Action("Index","Request")" class="site_title">Заявки на экзамены</a></div></li>
+                            <li><div><a href="@Url.Action("FinishedExams","Exam")" class="site_title">Пройденные экзамены</a></div></li>
+                            <li>еу</li>
+                            <li>
+                                <div><a href="@Url.Action("AvailableExams","Exam")" class="site_title">Доступные экзамены</a></div>
+                                <!-- Second level sub dropdown -->
+                            <ul>
+                                    <li>Breadcrumb</li>
+                                    <li>Dropdown</li>
+                                    <li>Menu</li>
+                                    <li>Nested dropdown</li>
+                                </ul>
+                            </li>
+                            <li>Доступные экзамены</li>
+                            <li>Feedback</li>
+                        </ul>
+                    </li>
+                }
+            }
+
+            <li><div><a href="@Url.Action("Index","News")" class="site_title">Новости</a></div></li>
+            <li>Информация</li>
+            <li>
+                <div>
+                    @{
+                        if (!User.Identity.IsAuthenticated)
+                        {
+                            <a href="@Url.Action("Index","Authorization")" class="site_title">Вход</a>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("Logout","Authorization")" class="site_title">Выход</a>
+                        }
+                    }
+                </div>
+            </li>
+            @{
+                if (User.Identity.IsAuthenticated)
+                {
+                    <li>
+                        Панель администратора
+                            <!-- First level sub dropdown -->
+                        <ul>
+                        <li><div><a href="@Url.Action("NotCheckedRequests","Request")" class="site_title">Рассмотрение заявок</a></div></li>
+                        <li><div><a href="@Url.Action("ChangeExamsStatuses","Exam")" class="site_title">Активация экзаменов</a></div></li>
+                        <li><div><a href="@Url.Action("AddNews","News")" class="site_title">Добавление новостей</a></div></li>
+                                <li><div><a href="@Url.Action("ExamsCreator","Exam")" class="site_title">Создание экзаменов</a></div></li>
+                                <li><div><a href="@Url.Action("IndicatorsCreator","Exam")" class="site_title">Добавление индикаторов компетенций</a></div></li>
+                                <li><div><a href="@Url.Action("CompetenciesCreator","Exam")" class="site_title">Добавление компетенций</a></div></li>
+                                <li><div><a href="@Url.Action("CompetenciesIndicatorsCreator","Exam")" class="site_title">Добавление индикаторов в компетенцию</a></div></li>
+                            </ul>
+                    </li>
+                }
+            }
+        </ul>
+    </header>
+    <div class="container">
+
+        <main class="container__main">
+            <!-- Left sidebar -->
+            <!--<aside class="container__left">Left</aside>-->
+            <!-- Main content -->
+            <article class="container__middle">
+                @RenderBody()
+
+            </article>
+
+            <!-- Right sidebar -->
+            <!--<nav class="container__right">Right</nav>-->
+
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            <!--&copy; 2022 - WebApplication2 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>-->
+        </div>
+    </footer>
+    <!--<script src="~/lib/jquery/dist/jquery.min.js"></script>-->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

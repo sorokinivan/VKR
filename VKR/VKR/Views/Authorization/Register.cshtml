@@ -1,0 +1,176 @@
+﻿<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+  <meta charset="UTF-8">
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+
+</head>
+<style>
+
+.screen-1 {
+  border-radius: 30px;
+  box-shadow: 0 0 2em #e6e9f9;
+  overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-left: auto;
+    margin-right: auto;
+  width:30%;
+  height:600px;
+  background-color:white;
+}
+
+.screen-1 .email {
+  background: white;
+  box-shadow: 0 0 2em #e6e9f9;
+  padding: 1em;
+  display: flex;
+  gap: 0.5em;
+  border-radius: 20px;
+  color: #4d4d4d;
+  width:260px;
+}
+.screen-1 .email input {
+  outline: none;
+  border: none;
+}
+.screen-1 .email input::placeholder {
+  color: black;
+  font-size: 0.9em;
+}
+
+.screen-1 .email ion-icon {
+  color: #4d4d4d;
+  margin-bottom: -0.2em;
+}
+.screen-1 .password {
+  background: white;
+  box-shadow: 0 0 2em #e6e9f9;
+  padding: 1em;
+  display: flex;
+  gap: 0.5em;
+  border-radius: 20px;
+  color: #4d4d4d;
+  width:260px;
+}
+.screen-1 .password input {
+  outline: none;
+  border: none;
+}
+.screen-1 .password input::placeholder {
+  color: black;
+  font-size: 0.9em;
+}
+.screen-1 .password ion-icon {
+  color: #4d4d4d;
+  margin-bottom: -0.2em;
+}
+.screen-1 .sign-up {
+  display: flex;
+  font-size: 0.7em;
+  color: #5e5e5e;
+  gap: 14em;
+  padding-bottom: 10em;
+  margin-left: auto; margin-right: auto;
+}
+.screen-1 .sign-up span {
+  cursor: pointer;
+}
+
+.screen-1 .login {
+  padding: 1em;
+  background: #3e4684;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-weight: 600;
+  width:200px;
+}
+</style>
+<body>
+  <div class="screen-1">
+      <div class="email">
+          <ion-icon name="mail-outline"></ion-icon>
+      <input type="email" id="email" name="email" placeholder="Email"/>
+      </div>
+      <br />
+      <div class="password">
+          <ion-icon name="lock-closed-outline"></ion-icon>
+      <input class="pas" id="password" type="password" name="password" placeholder="Password"/>
+      <ion-icon class="show-hide" name="eye-outline" style="margin-left: auto; margin-right: 0;"></ion-icon>
+      </div>
+      <br />
+      <div class="password">
+          <ion-icon name="lock-closed-outline"></ion-icon>
+      <input class="pas" id="passwordRepeat" type="password" name="password" placeholder="Repeat password"/>
+      <ion-icon class="show-hide" name="eye-outline" style="margin-left: auto; margin-right: 0;"></ion-icon>
+      </div>
+      <br />
+      <div class="email">
+      <input type="email" id="firstName" name="email" placeholder="First name"/>
+      </div>
+      <br />
+      <div class="email">
+      <input type="email" id="lastName" name="email" placeholder="Last name"/>
+      </div>
+      <br />
+      <div class="email">
+      <input type="email" id="userName" name="email" placeholder="User name"/>
+      </div>
+      <br />
+      <div class="sign-up"><a href="@Url.Action("Index","Authorization")" class="site_title">Signin</a></div>
+      <button class="login" id="registerBtn" onclick="onRegisterClick()">Register</button>
+  </div>
+</body>
+</html>
+
+<script>
+    function onRegisterClick() {
+        let urlPath = '@Url.Action("RegisterNewUser", "Authorization")';
+        var password = document.getElementById("password").value;
+        var passwordRepeat = document.getElementById("passwordRepeat").value;
+        if(password === passwordRepeat){
+            var userModel = {
+            "FirstName": document.getElementById("firstName").value,
+            "LastName": document.getElementById("lastName").value,
+            "Password": password,
+            "Email": document.getElementById("email").value,
+            "RoleId": 1,
+            "UserName": document.getElementById("userName").value
+            };
+        sendRequest(urlPath, "POST", JSON.stringify(userModel), "html", onSuccessInitRequestForExport, onError, window.location.pathname);
+        }
+        
+    }
+
+    function onSuccessInitRequestForExport() {
+        
+    }
+
+     function onError() {
+    }
+
+    function sendRequest(url, method, data, dataType, onSuccess, onError, currentUrl) {
+    $(".loading-spinner").show();
+    $.ajax({
+        url: url,
+        type: method,
+        data: data,
+        dataType: dataType,
+        contentType: "application/json; charset=utf-8",
+        success: onSuccess,
+        error:  onError,
+        statusCode: {
+            401: function () {
+                $("#details").empty();
+                redirectionToLoginPage(currentUrl);
+            }
+        }
+    });
+    $(".loading-spinner").hide();
+}
+</script>

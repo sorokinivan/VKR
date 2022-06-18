@@ -1,0 +1,52 @@
+﻿@using VKR.Models.RequestModels
+@*@model IEnumerable<ExamResultViewData>*@
+
+<div>
+    @(Html.Kendo().Grid<VKR.Models.ExamModels.ExamWithCompetenciesViewModel>()
+    .Name("ExamsGrid")
+    .ToolBar(t => t.Search())
+    .Columns(columns =>
+    {
+    columns.Bound(c=>c.ExamId).Visible(false);
+    columns.Bound(c => c.ExamName).Title("Экзамен");
+    columns.Bound(c => c.Competencies).Visible(false);//.Title("Компетенции экзамена").ClientTemplate("#=generateTemplate(Competencies)#");
+    columns.Command(command =>
+    {
+    command.Custom("getResults")
+    .Click("createRequestClick")
+    .IconClass("k-icon k-i-edit")
+    .Text("Создать заявку");
+    })
+    .Width(300);
+    })
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Model(model => model.Id(p=>p.ExamId))
+    .Model(model => model.Field(p=>p.ExamName))
+    .Model(model => model.Field(p=>p.Competencies))
+    .Read(read => read.Action("GetExamsForRequest", "Request"))
+    )
+    .Pageable(p => p.Enabled(true))
+    .Scrollable()
+    .Filterable()
+    .Sortable()
+    .Search(s => {
+    s.Field(o => o.ExamName);
+    })
+    )
+</div>
+
+<script>
+
+
+    function generateTemplate(Competencies) {
+        var template = "<ul>";
+
+        for (var i = 0; i < Competencies.length; i++) {
+            template = template + "<li>" + Competencies[i] + "</li>";
+        }
+        return template + "</ul>";
+    }
+
+    
+</script>

@@ -1,0 +1,82 @@
+﻿<div>
+    @(Html.Kendo().Grid<VKR.Models.ExamModels.Exam>()
+    .Name("ExamsGrid")
+    .Columns(columns =>
+    {
+    columns.Bound(c=>c.Id).Visible(false);
+    columns.Bound(c => c.ExamName).Title("Название");
+    columns.Bound(c => c.Status).Title("Статус");
+    columns.Command(command =>
+    {
+    command.Custom("openExam")
+    .Click("openExam")
+    .IconClass("k-icon k-i-edit")
+    .Text("Открыть для прохождения");
+    command.Custom("closeExam")
+    .Click("closeExam")
+    .IconClass("k-icon k-i-edit")
+    .Text("Закрыть для прохождения");
+    })
+    .Width(180);
+    })
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Model(model => model.Id(p=>p.Id))
+    .Model(model => model.Field(p=>p.ExamName))
+    .Model(model => model.Field(p=>p.Status))
+    .Read(read => read.Action("GetExams", "Exam"))
+    )
+    .Pageable(p => p.Enabled(true))
+    )
+</div>
+
+<script>
+    function openExam(e){
+        debugger;
+         var grid = $("#ExamsGrid").data("kendoGrid");
+            var item = grid.dataItem($(e.target).closest("tr"));
+            var t = item.Id;
+            $.ajax({
+            url: '@Url.Action("OpenExam", "Exam")',
+            type: 'POST',
+            data: { examId:item.Id },
+            success: onSuccess,
+        error: onError,
+        statusCode: {
+            401: function () {
+                $("#details").empty();
+                redirectionToLoginPage(currentUrl);
+            }
+        }
+
+                });
+    }
+
+    function closeExam(e){
+        debugger;
+         var grid = $("#ExamsGrid").data("kendoGrid");
+            var item = grid.dataItem($(e.target).closest("tr"));
+            $.ajax({
+            url: '@Url.Action("CloseExam", "Exam")',
+            type: 'POST',
+            data: { examId:item.Id },
+            success: onSuccess,
+        error: onError,
+        statusCode: {
+            401: function () {
+                $("#details").empty();
+                redirectionToLoginPage(currentUrl);
+            }
+        }
+
+                });
+    }
+
+    function onSuccess() {
+            showPopupMessage("Индикатор успешно создан", 'success');
+        }
+
+         function onError() {
+             showPopupMessage("Индиктор не создан", 'error');
+        }
+</script>

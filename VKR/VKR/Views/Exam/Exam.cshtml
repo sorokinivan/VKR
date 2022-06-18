@@ -1,0 +1,83 @@
+﻿@using VKR.Models.ExamModels
+@model ExamViewModel
+@Model.ExamName
+<br />
+@foreach (var item in Model.Questions)
+{
+    <br />
+    <br />
+    <div id="question+@item.QuestionId">@item.QuestionText</div>
+    @foreach (var answer in item.Answers)
+    {
+        <br />
+        <input type="checkbox" id="inputQuestion+@item.QuestionId+Answer+@answer.AnswerId" name="@answer.AnswerText">
+
+        <label for="input+Question+@item.QuestionId+Answer+@answer.AnswerId">@answer.AnswerText</label>
+        <br />
+    }
+}
+@(Html.Kendo().Button()
+    .Name("endExamButton")
+    .HtmlAttributes( new {type = "button"} )
+    .Content("Закончить прохождение экзамена")
+    .Events(e => e
+    .Click("endExamClick")
+    )
+    )
+<script>
+    function endExamClick(){
+        var answersCount = @Model.Questions[0].Answers.FirstOrDefault().AnswerId;;
+        var answerdIsEnd = false;
+        var answersStart = @Model.Questions[0].Answers.FirstOrDefault().AnswerId;
+        var result = new Object();
+        result.examId = @Model.ExamId;
+        var questions = new Array();
+        var questionsStart = @Model.Questions.FirstOrDefault().QuestionId;
+        var questionsCount = @Model.Questions.Count;
+        var questionsEnd = questionsStart + questionsCount;
+        for(var i = questionsStart; i < questionsEnd; i++){
+            var question = new Object();
+            question.questionId = i;
+            var answers = new Array();
+            while(true){
+            //var answersEnd = answersStart + answersCount;
+            //for(var j = answersStart; j < answersEnd; j++){
+                debugger;
+                var answerId = "inputQuestion+"+i+"+Answer+"+answersCount;
+
+
+                var answer = document.getElementById(answerId);
+                 if(!answer){
+                    break;
+                }
+                var answerIsChecked = answer.checked;
+                if(answerIsChecked){
+                    answers.push(answersCount);
+                }
+                answersCount = answersCount + 1;
+
+            }
+            question.answers = answers;
+            questions.push(question);
+        }
+        result.questions = questions;
+        debugger;
+        $.ajax({
+                type:"post",
+                url: "@Url.Action("SaveExamResults","Exam")",
+                datatype: "html",
+                data: { model:result },
+                success: onSuccess(),
+                error: function (args) {
+                }
+            })
+    }
+
+    function onSuccess() {
+                  showPopupMessage("Результаты экзамена сохранены", 'success');
+              }
+
+               function onError() {
+                   showPopupMessage("Ошибка", 'error');
+              }
+</script>

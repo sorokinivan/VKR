@@ -1,0 +1,88 @@
+﻿@using Kendo.Mvc.UI
+<script src="~/scripts/commonScripts.js"></script>
+<div>
+    @(Html.Kendo().Grid<VKR.Models.ExamModels.Exam>()
+    .Name("FinishedExamsGrid")
+    .Columns(columns =>
+    {
+    columns.Bound(c=>c.Id).Visible(false);
+    columns.Bound(c => c.ExamName).Title("Название");
+    columns.Command(command =>
+    {
+    command.Custom("getResults")
+    .Click("initWindow")
+    .IconClass("k-icon k-i-edit")
+    .Text("Результаты");
+    })
+    .Width(180);
+    })
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Model(model => model.Id(p=>p.Id))
+    .Model(model => model.Field(p=>p.ExamName))
+    .Read(read => read.Action("GetFinishedExams", "Exam"))
+    )
+    .Pageable(p => p.Enabled(true))
+    )
+</div>
+
+<div id="window">
+    @(Html.Kendo().Window()
+    .Name("myWindow")
+    .Title("Create Employee") //title
+    .Visible(false)
+    .Draggable(true)
+    .Modal(true)
+    .Events(e => e.Open("onOpenWindow"))
+    )
+</div>
+<script>
+            var examId;
+
+            function getGradesCount(e){
+
+            }
+            function getExamId(e){
+                var request =
+            {
+                examId: examId
+            };
+            return request;
+            }
+
+            function initWindow(e){
+                debugger;
+                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                examId = dataItem.Id;
+                var createWindow = $('#myWindow').data('kendoWindow');
+                 createWindow.center().open();
+
+            }
+
+            function onOpenWindow(e){
+            
+                $.ajax({
+            url: '@Url.Action("ExamGradesPartial", "Exam")',
+            type: 'POST',
+            data: { examId:examId },
+            success: function(result) {
+                debugger;
+                $('#myWindow').html(result);
+            }
+                });
+            }
+       
+
+            function onSuccessData(data) {
+                debugger;
+                    var myWindow = $("#myWindow").getKendoWindow();
+                    myWindow.content(data);
+            }
+
+            function onSuccessInitRequestForExport() {
+                }
+
+                 function onError() {
+                     showPopupMessage("Что-то сломалось", 'error');
+                }
+</script>

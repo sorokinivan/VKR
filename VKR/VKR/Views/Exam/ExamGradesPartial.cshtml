@@ -1,0 +1,55 @@
+﻿@using VKR.Models.ProfessionalGradeModels
+@*@model IEnumerable<ExamResultViewData>*@
+
+<div>
+    1
+    @ViewBag.Test
+    @*@{
+        Html.Kendo().Window()
+        .Name("window")
+        .Title("Choose a Financial Institution (FI)")
+        .Content(@<text>
+        @{*@
+    @(Html.Kendo().Grid(ViewBag.TestData as IEnumerable<ExamResultViewData>)
+        .Name("ExamResultsGrid")
+        .Columns(columns =>
+        {
+            columns.Bound(c => c.Id).Visible(false);
+            columns.Bound(c => c.O).Title("O");
+            columns.Bound(c => c.D).Title("D");
+            columns.Bound(c => c.H).Title("H");
+            columns.Bound(c => c.R).Title("R");
+            for (int i = 0; i < ViewBag.GradesCount; i++)
+            {
+                columns.Group(group => group.Title((ViewBag.GradesNames as List<string>)[i])
+        .Columns(col =>
+        {
+            col.Bound(co => co.Grades[i].Grade);
+            col.Bound(co => co.Grades[i].StringGrade);
+        }));
+            }
+        })
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .Model(model =>
+        {
+            model.Id(f => f.Id);
+            model.Field(f => f.O);
+            model.Field(f => f.D);
+            model.Field(f => f.H);
+            model.Field(f => f.R);
+            //model.Field(f => f.ExamId);
+            //model.Field(f => f.UserId);
+            //model.Field(f => f.Grades.Select(x => x.Grade));
+            //model.Field(f => f.Grades.Select(x => x.StringGrade));
+        })
+        //.Read(read => read.Action("GetResultsData", "Exam").Data("getExamId"))
+        )
+        .Pageable(p => p.Enabled(true))
+    )
+    @*.Render();
+        </text>
+        )
+        .Render();
+        }*@
+</div>

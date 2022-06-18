@@ -1,0 +1,47 @@
+﻿@using VKR.Models.ExamModels
+@(Html.Kendo().DropDownList()
+          .Name("competency")
+          .OptionLabel("Select competency...")
+          .DataValueField("Id")
+        .DataTextField("CompetencyName")
+        .BindTo((System.Collections.Generic.List<Competency>)ViewBag.Competencies)
+    )
+
+    @(Html.Kendo().MultiSelect()
+          .Name("indicators")
+          .Placeholder("Select indicators...")
+          .DataValueField("Id")
+        .DataTextField("IndicatorName")
+        .BindTo((System.Collections.Generic.List<Indicator>)ViewBag.Indicators)
+    )
+@(Html.Kendo().Button()
+    .Name("newIndicatorButton")
+    .HtmlAttributes( new {type = "button"} )
+    .Content("Добавить новый индикатор")
+    .Events(e => e
+            .Click("newCompetencyIndicatorsClick")
+        )
+)
+<script>
+    function newCompetencyIndicatorsClick(){
+        debugger;
+                var urlPath = '@Url.Action("CreateCompetencyIndicators", "Exam")';
+                var ms = $("#indicators").data("kendoMultiSelect");
+                var indicators = ms.value();
+                var competency = $("#competency").data("kendoDropDownList").value();
+                var userModel = {
+                "CompetencyId": Number(competency),
+                "IndicatorIds": indicators
+                };
+            sendRequest(urlPath, "POST", JSON.stringify(userModel), "html", onSuccess, onError, window.location.pathname);
+
+    }
+
+    function onSuccess() {
+            showPopupMessage("Индикатор успешно создан", 'success');
+        }
+
+         function onError() {
+             showPopupMessage("Индиктор не создан", 'error');
+        }
+</script>

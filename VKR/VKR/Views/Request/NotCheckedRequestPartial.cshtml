@@ -1,0 +1,35 @@
+﻿ <div>
+      @(Html.Kendo().TextArea()
+        .Name("requestText")
+    )
+ </div>
+ <div>
+     @(Html.Kendo().Button()
+    .Name("approveRequest")
+    .HtmlAttributes( new {type = "button"} )
+    .Events(e => e.Click("onApproveButtonClick"))
+    .Content("Одобрить заявку")
+)
+@(Html.Kendo().Button()
+    .Name("declineRequest")
+    .HtmlAttributes( new {type = "button"} )
+    .Events(e => e.Click("onDeclineButtonClick"))
+    .Content("Отклонить заявку")
+)
+ </div>
+
+ <script>
+    //function onApproveButtonClick(){
+    //    var text = $("#requestText").data("kendoTextBox");
+    //    var userId = @ViewBag.User;
+    //    var examId = @ViewBag.Exam;
+    //    onApproveClick(userId, examId, text);
+    //}
+
+    //function onDeclineButtonClick(){
+    //    var text = $("#requestText").data("kendoTextBox");
+    //    var userId = @ViewBag.User;
+    //    var examId = @ViewBag.Exam;
+    //    onDeclineClick(userId, examId, text);
+    //}
+ </script>

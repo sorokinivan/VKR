@@ -1,0 +1,181 @@
+﻿<body onload="onloadFunction()">
+    @(Html.Kendo().Button()
+    .Name("newCompetencyButton")
+    .HtmlAttributes( new {type = "button"} )
+    .Content("Добавить новый вопрос")
+    .Events(e => e
+    .Click("newQuestionClick")
+    )
+    )
+
+</body>
+<div id="questionsDiv">
+</div>
+@(Html.Kendo().Button()
+    .Name("newExamButton")
+    .HtmlAttributes( new {type = "button"} )
+    .Content("Сохранить экзамен")
+    .Events(e => e
+    .Click("newExamClick")
+    )
+    )
+<script>
+          var questionsCount = 0;
+          var indicators = new Array();
+          var answers = new Array();
+          var examName;
+          var competencyId;
+          var threshold;
+
+          function onloadFunction(){
+              var t = null;
+              examName = localStorage.getItem('examName');
+              //TODO ПОМЕНЯТЬ НА НЕСКОЛЬКО КОМПЕТЕНЦИЙ
+              competencyId = localStorage.getItem('competencyId');
+              threshold = localStorage.getItem('threshold');
+              $.ajax({
+                  url: '@Url.Action("GetIndicatorsByCompetency", "Exam")',
+                  type: 'POST',
+                  data: { competencyId:competencyId },
+                  success: function(data){
+                      debugger;
+                      indicators = data.data;
+                  },
+              error: onError,
+              statusCode: {
+                  401: function () {
+                      $("#details").empty();
+                      redirectionToLoginPage(currentUrl);
+                  }
+              }
+
+                      });
+              showPopupMessage(examName + " "+competencyId + " " + indicators[0], 'success');
+          }
+
+          function newQuestionClick(){
+              questionsCount = questionsCount + 1;
+              var newDiv = $('<div id ="questionDiv'+questionsCount+'" class="questionDiv'+questionsCount+'">Новый вопрос</div>');
+              $('#questionsDiv').append(newDiv);
+              var newQBR = $('</br>');
+              $('#questionsDiv').find(newDiv).append(newQBR);
+              var newQInput = $('<input type="text" label="Новый вопрос" class="questionInput" id="questionInput'+questionsCount+'">');
+              $('#questionsDiv').find(newDiv).append(newQInput);
+              var newQSelect = $('<select id="comboboxShowLabel'+questionsCount+'">');
+              $('#questionsDiv').find(newDiv).append(newQSelect);
+              var newQBR = $('</br>');
+              $('#questionsDiv').find(newDiv).append(newQBR);
+              debugger;
+              var select = document.getElementById("comboboxShowLabel"+questionsCount+"");
+              for (var i = 0; i < indicators.length; i++) {
+                  var selectItem = $('<option value=' + indicators[i].Id + '>' + indicators[i].IndicatorName + '</option>');
+                  showPopupMessage(selectItem, 'success');
+          $(select).append(selectItem);
+                }
+              var newQBR = $('</br>');
+              $('#questionsDiv').find(newDiv).append(newQBR);
+              var newQButton = $('<input type="button" id = '+questionsCount+' value="Добавить новый ответ" onclick="newAnswerClick(this.id)">');
+              $('#questionsDiv').find(newDiv).append(newQButton);
+
+          }
+
+          function newAnswerClick(element){
+              debugger;
+
+              var result = answers.find(obj => {
+        return obj.competencyId === element
+      });
+
+      if(result){
+          var index = answers.indexOf(result);
+          var answerId = result.answersCount + 1;
+          var newAnswer = new Object();
+          newAnswer.competencyId = element;
+              newAnswer.answersCount = answerId;
+          result = newAnswer;
+          answers[index] = result;
+      }
+      else{
+          result = new Object();
+              result.competencyId = element;
+              result.answersCount = 1;
+              answers.push(result);
+      }
+      var questionDiv = "#questionDiv"+result.competencyId;
+      var parent = document.querySelector(questionDiv);
+              var newDiv = document.createElement("div");
+              var newContent = document.createTextNode("");
+              newDiv.appendChild(newContent);
+              newDiv.setAttribute("class", "questionDiv"+result.competencyId+"answerDiv"+result.answersCount);
+
+          const newAInput = document.createElement("input");
+          newAInput.setAttribute("type", "text");
+          newAInput.setAttribute("class", "answerInput");
+          var inputId = "questionDiv"+result.competencyId+"answerInput"+result.answersCount;
+          newAInput.setAttribute("id", inputId);
+          newDiv.appendChild(newAInput);
+          var newACheckBox = document.createElement("input");
+          newACheckBox.setAttribute("type", "checkbox");
+          newACheckBox.setAttribute("class", "answerCheckbox");
+          var checkboxId = "questionDiv"+result.competencyId+"answerCheckbox"+result.answersCount;
+          newACheckBox.setAttribute("id", checkboxId);
+          newDiv.appendChild(newACheckBox);
+          parent.append(newDiv);
+          //var newAInput = $("<input type='text' label='Новый ответ' class='answerInput' id='answer'>");
+          //var image2 = $('<input>').attr('class', 'answerInput').attr('label', 'Новый ответ').attr('type', 'text').attr('id','answer');
+          //parent.append(image2);
+          //var newACheckbox = $('<input type="checkbox" label="Правильный ответ" class="answerCheckbox" id="checkbox"> ');
+          //parent.append(newACheckbox);
+          //var newQBR = $('</br>');
+          //    parent.find(newDiv).append(newQBR);
+          }
+
+          function newExamClick(){
+              var resultData = new Object();
+              resultData.examName = examName;
+              resultData.competencyId = competencyId;
+              resultData.threshold = threshold;
+              var questions = new Array();
+              debugger;
+              for(var i = 1; i <= questionsCount; i++){
+                  var questionText = document.getElementById("questionInput"+i).value;
+                  var questionIndicator = document.getElementById("comboboxShowLabel"+i).value;
+                  var question = new Object();
+                  question.questionText = questionText;
+                  question.questionIndicator = Number(questionIndicator);
+                  var answersData = new Array();
+                  var result = answers.find(obj => {
+                    return obj.competencyId === String(i)
+                  });
+                  for(var j = 1; j <= result.answersCount; j++){
+                      var answerText = document.getElementById("questionDiv"+i+"answerInput"+j).value;
+                      var answerIsCorrect = document.getElementById("questionDiv"+i+"answerCheckbox"+j).checked;
+                      var answer = new Object();
+                      answer.answerText = answerText;
+                      answer.answerIsCorrect = answerIsCorrect;
+                      answersData.push(answer);
+                  }
+                  question.answers = answersData;
+                  questions.push(question);
+              }
+              resultData.questions = questions;
+              debugger;
+              $.ajax({
+                type:"post",
+                url: "@Url.Action("SaveExam","Exam")",
+                datatype: "html",
+                data: { model:resultData },
+                success: onSuccess(),
+                error: function (args) {
+                }
+            })
+          }
+
+          function onSuccess() {
+                  showPopupMessage("Экзамен успешно создан", 'success');
+              }
+
+               function onError() {
+                   showPopupMessage("Экзамен не создан", 'error');
+              }
+</script>

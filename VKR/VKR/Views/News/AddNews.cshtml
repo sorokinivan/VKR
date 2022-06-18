@@ -1,0 +1,41 @@
+﻿<div>
+
+    @(Html.Kendo().TextBox()
+    .Placeholder("Название новости")
+    .Name("newsName")
+    )
+</div>
+<div>
+    @(Html.Kendo().TextArea()
+    .Placeholder("Текст новости")
+    .Rows(25)
+    .Name("newsText")
+    )
+</div>
+<div>
+    @(Html.Kendo().Button()
+    .Name("saveNews")
+    .HtmlAttributes( new {type = "button"} )
+    .Events(e => e.Click("onSaveNewsButtonClick"))
+    .Content("Сохранить новость")
+)
+</div>
+
+<script>
+    function onSaveNewsButtonClick(e){
+        var name = $("#newsName").kendoTextBox().data('kendoTextBox').value();
+        var text = $("#newsText").kendoTextArea().data('kendoTextArea').value();
+        var model = new Object();
+        model.newsName = name;
+            model.newsText = text;
+        $.ajax({
+            url: '@Url.Action("SaveNews", "News")',
+            type: 'POST',
+            datatype: "html",
+            data: { model:model },
+            success: function(result) {
+                debugger;
+            }
+                });
+    }
+</script>

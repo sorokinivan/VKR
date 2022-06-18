@@ -1,0 +1,38 @@
+﻿@using Kendo.Mvc.UI
+<script src="~/scripts/commonScripts.js"></script>
+<div>
+    @(Html.Kendo().Grid<VKR.Models.ExamModels.Exam>()
+    .Name("AvailableExamsGrid")
+    .Columns(columns =>
+    {
+    columns.Bound(c=>c.Id).Visible(false);
+    columns.Bound(c => c.ExamName).Title("Название");
+    columns.Command(command =>
+    {
+    command.Custom("openExam")
+    .Click("openExam")
+    .IconClass("k-icon k-i-edit")
+    .Text("Начать прохождение экзамена");
+    })
+    .Width(180);
+    })
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Model(model => model.Id(p=>p.Id))
+    .Model(model => model.Field(p=>p.ExamName))
+    .Read(read => read.Action("GetAvailableExams", "Exam"))
+    )
+    .Pageable(p => p.Enabled(true))
+    )
+</div>
+
+<script>
+    function openExam(e){
+        debugger;
+        var grid = $("#AvailableExamsGrid").getKendoGrid();
+    var item = grid.dataItem($(e.target).closest("tr"));
+        localStorage.setItem('examId', Number(item.Id));
+        var id = Number(item.Id);
+        window.location.href = '@Url.Action("GetExamPage", "Exam", new {examId = "ID"})'.replace("ID",id);
+    }
+</script>

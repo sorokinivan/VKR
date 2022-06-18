@@ -1,0 +1,124 @@
+﻿<div>
+    @(Html.Kendo().Grid<VKR.Models.RequestModels.RequestViewModel>()
+    .Name("NotCheckedRequestsGrid")
+    .Columns(columns =>
+    {
+    columns.Bound(c=>c.Id).Visible(false);
+    columns.Bound(c => c.UserId).Visible(false);
+    columns.Bound(c => c.UserName).Title("Название");
+    columns.Bound(c => c.ExamId).Visible(false);
+    columns.Bound(c => c.ExamName).Title("Название");
+    columns.Bound(c => c.Status).Visible(false);
+    columns.Command(command =>
+    {
+    command.Custom("getRequest")
+    .Click("initWindow")
+    .IconClass("k-icon k-i-edit")
+    .Text("Подробнее");
+    })
+    .Width(180);
+    })
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Model(model => model.Id(p=>p.Id))
+    .Model(model => model.Field(p=>p.UserId))
+    .Model(model => model.Field(p=>p.UserName))
+    .Model(model => model.Field(p=>p.ExamId))
+    .Model(model => model.Field(p=>p.ExamName))
+    .Model(model => model.Field(p=>p.Status))
+    .Read(read => read.Action("GetNotCheckedRequests", "Request"))
+    )
+    .Pageable(p => p.Enabled(true))
+    )
+</div>
+
+<div id="window">
+    @(Html.Kendo().Window()
+    .Name("notCheckedRequestWindow")
+    .Title("Рассмотрение заявки") //title
+    .Visible(false)
+    .Draggable(true)
+    .Modal(true)
+    .Events(e => e.Open("onOpenWindow"))
+    )
+</div>
+
+<script>
+    var examId = -1;
+    var userId = -1;
+    var userName = "";
+    function initWindow(e){
+        debugger;
+        var grid = $("#NotCheckedRequestsGrid").data("kendoGrid");
+            var item = grid.dataItem($(e.target).closest("tr"));
+            examId = item.ExamId;
+            userId = item.UserId;
+            userName = item.UserName;
+            sessionStorage.setItem('userIdRequest', userId);
+            sessionStorage.setItem('examIdRequest', examId);
+            sessionStorage.setItem('userNameRequest', userName);
+                var createWindow = $('#notCheckedRequestWindow').data('kendoWindow');
+                 createWindow.center().open();
+    }
+
+    function onOpenWindow(e){
+        debugger;
+
+                $.ajax({
+            url: '@Url.Action("NotCheckedRequestPartial", "Request")',
+            type: 'POST',
+            data: { examId:examId },
+            success: function(result) {
+                debugger;
+                $('#notCheckedRequestWindow').html(result);
+            }
+                });
+            }
+
+           function onApproveButtonClick(){
+               debugger;
+               var userId = sessionStorage.getItem('userIdRequest');
+         var examId = sessionStorage.getItem('examIdRequest');
+         var userName = sessionStorage.getItem('userNameRequest');
+         var text = $("#requestText").kendoTextArea().data('kendoTextArea').value();
+        var model = new Object();
+        model.userId = userId;
+            model.examId = Number(examId);
+            model.status = 2;
+            model.text = text;
+            model.userName = userName;
+        $.ajax({
+            url: '@Url.Action("SaveResultRequest", "Request")',
+            type: 'POST',
+            datatype: "html",
+            data: { model:model },
+            success: function(result) {
+                debugger;
+            }
+                });
+    }
+
+    function onDeclineButtonClick(){
+         debugger;
+         var userId = sessionStorage.getItem('userIdRequest');
+         var examId = sessionStorage.getItem('examIdRequest');
+         var userName = sessionStorage.getItem('userNameRequest');
+         var text = $("#requestText").kendoTextArea().data('kendoTextArea').value();
+        var model = new Object();
+        model.userId = userId;
+            model.examId = Number(examId);
+            model.status = 2;
+            model.text = text;
+            model.userName = userName;
+        $.ajax({
+            url: '@Url.Action("SaveResultRequest", "Request")',
+            type: 'POST',
+            datatype: "html",
+            data: { model:model },
+            success: function(result) {
+                debugger;
+            }
+                });
+    }
+
+</script>

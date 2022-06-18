@@ -1,0 +1,41 @@
+﻿@(Html.Kendo().TextBox()
+        .Name("indicatorName")
+  )
+@(Html.Kendo().Button()
+    .Name("newIndicatorButton")
+    .HtmlAttributes( new {type = "button"} )
+    .Content("Добавить новый индикатор")
+    .Events(e => e
+            .Click("newIndicatorClick")
+        )
+)
+<script>
+    function newIndicatorClick(){
+            var name = $('#indicatorName').data('kendoTextBox').value();
+                var urlPath = '@Url.Action("CreateNewIndicator", "Exam")';
+                var data = { name:name };
+                $.ajax({
+            url: '@Url.Action("CreateNewIndicator", "Exam")',
+            type: 'POST',
+            data: { name:name },
+            success: onSuccess,
+        error: onError,
+        statusCode: {
+            401: function () {
+                $("#details").empty();
+                redirectionToLoginPage(currentUrl);
+            }
+        }
+
+                });
+                //sendRequest(urlPath, "POST", data, "html", onSuccess, onError, window.location.pathname);
+    }
+
+    function onSuccess() {
+            showPopupMessage("Индикатор успешно создан", 'success');
+        }
+
+         function onError() {
+             showPopupMessage("Индиктор не создан", 'error');
+        }
+</script>
