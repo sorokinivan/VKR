@@ -50,7 +50,6 @@
               }
 
                       });
-              showPopupMessage(examName + " "+competencyId + " " + indicators[0], 'success');
           }
 
           function newQuestionClick(){
@@ -69,7 +68,6 @@
               var select = document.getElementById("comboboxShowLabel"+questionsCount+"");
               for (var i = 0; i < indicators.length; i++) {
                   var selectItem = $('<option value=' + indicators[i].Id + '>' + indicators[i].IndicatorName + '</option>');
-                  showPopupMessage(selectItem, 'success');
           $(select).append(selectItem);
                 }
               var newQBR = $('</br>');

@@ -18,5 +18,6 @@ namespace VKR.Repositories.Exams
         Task<ExamViewModel> GetExamById(int examId);
         Task SaveExamResults(ExamResultsDataModel model, string userId);
         Task<List<Exam>> GetExams();
+        Task <List<AllResultsModel>> GetAllResults();
     }
 }

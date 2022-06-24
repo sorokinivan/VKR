@@ -32,6 +32,18 @@ namespace VKR.Controllers
             return View("FinishedExams");
         }
 
+        public IActionResult AllExamsResults()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> GetAllExamsResults([DataSourceRequest] DataSourceRequest request)
+        {
+            var result = await _examRepository.GetAllResults();
+            return Json(result.ToDataSourceResult(request));
+
+        }
+
         public async Task<IActionResult> ExamsCreator()
         {
             ViewBag.Competencies = await _examRepository.GetCompetencies();

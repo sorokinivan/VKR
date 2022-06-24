@@ -139,19 +139,12 @@
             "LastName": document.getElementById("lastName").value,
             "Password": password,
             "Email": document.getElementById("email").value,
-            "RoleId": 1,
+            "RoleId": 2,
             "UserName": document.getElementById("userName").value
             };
         sendRequest(urlPath, "POST", JSON.stringify(userModel), "html", onSuccessInitRequestForExport, onError, window.location.pathname);
         }
         
-    }
-
-    function onSuccessInitRequestForExport() {
-        
-    }
-
-     function onError() {
     }
 
     function sendRequest(url, method, data, dataType, onSuccess, onError, currentUrl) {
@@ -173,4 +166,13 @@
     });
     $(".loading-spinner").hide();
 }
+
+        function onSuccessInitRequestForExport() {
+            showPopupMessage("Регистрация успешно выполнена", 'success');
+            window.location.href = '/Home/Index/';
+        }
+
+         function onError() {
+             showPopupMessage("Регистрация не выполнена", 'error');
+        }
 </script>

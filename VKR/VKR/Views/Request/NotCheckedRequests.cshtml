@@ -92,11 +92,18 @@
             type: 'POST',
             datatype: "html",
             data: { model:model },
-            success: function(result) {
-                debugger;
-            }
+            success: onSuccess(),
+            error: onSuccess(),
                 });
     }
+
+    function onSuccess() {
+            showPopupMessage("Заявка успешно рассмотрена", 'success');
+        }
+
+         function onError() {
+             showPopupMessage("Индиктор не создан", 'error');
+        }
 
     function onDeclineButtonClick(){
          debugger;
@@ -115,9 +122,8 @@
             type: 'POST',
             datatype: "html",
             data: { model:model },
-            success: function(result) {
-                debugger;
-            }
+            success: onSuccess(),
+            error: onError(),
                 });
     }
 

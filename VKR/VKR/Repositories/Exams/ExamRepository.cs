@@ -12,10 +12,12 @@ namespace VKR.Repositories.Exams
     {
         private readonly DBContext _context;
         private readonly IProfessionalGradeRepository _professionalGradeRepository;
-        public ExamRepository(DBContext context, IProfessionalGradeRepository professionalGradeRepository)
+        private readonly UserManager<IdentityUser> _userManager;
+        public ExamRepository(DBContext context, IProfessionalGradeRepository professionalGradeRepository, UserManager<IdentityUser> userManager)
         {
             _context = context;
             _professionalGradeRepository = professionalGradeRepository;
+            _userManager = userManager;
         }
 
         public async Task<List<Exam>> GetExams()
@@ -98,7 +100,8 @@ namespace VKR.Repositories.Exams
                     }
                 }
             
-            
+            var finishedExam = new UsersFinishedExams { ExamId = model.ExamId, UserId = userId };
+                _context.UsersFinishedExams.Add(finishedExam);
             await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -107,6 +110,28 @@ namespace VKR.Repositories.Exams
                 var tt = t;
             }
 
+        }
+
+        public async Task<List<AllResultsModel>> GetAllResults()
+        {
+            var result = new List<AllResultsModel>();
+            var examResults = await _context.ProfessionalGrades.ToListAsync();
+            var usersIds = examResults.Select(x=>x.UserId).ToList();
+            var examsIds = examResults.Select(x => x.ExamId).ToList();
+            var users = await _userManager.Users.Where(x => usersIds.Contains(x.Id)).Select(x => new { x.Id, x.UserName }).ToListAsync();
+            var exams = await _context.Exams.Where(x => examsIds.Contains(x.Id)).ToListAsync();
+            foreach (var item in examResults)
+            {
+                result.Add(new AllResultsModel
+                {
+                    UserId = item.UserId,
+                    ExamId = item.ExamId,
+                    UserName = users.Where(x => x.Id == item.UserId).Select(x => x.UserName).FirstOrDefault(),
+                    ExamName = exams.Where(x => x.Id == item.ExamId).Select(x => x.ExamName).FirstOrDefault(),
+                    ExamResult = item.StringGrade
+                });
+            }
+            return result;
         }
 
         private async Task<ProfessionalGradeInput> GetDataForGradeCalculation(List<ExamDichotomousGrades> model)
@@ -268,7 +293,10 @@ namespace VKR.Repositories.Exams
             }
             var newExam = new Exam { ExamName = model.ExamName, Threshold = model.Threshold, Status = (int)ExamStatusEnum.Close };
             _context.Exams.Add(newExam);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
+            var examCompetencies = new ExamsCompetencies { CompetencyId = model.CompetencyId, ExamId = newExam.Id };
+            _context.ExamsCompetencies.Add(examCompetencies);
+            _context.SaveChanges();
             foreach (var question in model.Questions)
             {
                 var newQuestion = new Question

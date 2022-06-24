@@ -59,12 +59,18 @@ $.ajax({
             url: '@Url.Action("SaveRequest", "Request")',
             type: 'POST',
             data: { examId:item.ExamId },
-            success: function() {
-            }
+            success: onSuccess(),
+            error: onSuccess(),
                 });
         console.log(1);
     }
+    function onSuccess() {
+            showPopupMessage("Заявка успешно создана", 'success');
+        }
 
+         function onError() {
+             showPopupMessage("Заявка не создана", 'error');
+        }
             function onOpenWindow(e){
             
                 $.ajax({

@@ -40,8 +40,8 @@
             url: '@Url.Action("OpenExam", "Exam")',
             type: 'POST',
             data: { examId:item.Id },
-            success: onSuccess,
-        error: onError,
+            success: onSuccessOpen,
+        error: onSuccessOpen,
         statusCode: {
             401: function () {
                 $("#details").empty();
@@ -60,8 +60,8 @@
             url: '@Url.Action("CloseExam", "Exam")',
             type: 'POST',
             data: { examId:item.Id },
-            success: onSuccess,
-        error: onError,
+            success: onSuccessOpen,
+        error: onSuccessOpen,
         statusCode: {
             401: function () {
                 $("#details").empty();
@@ -72,11 +72,15 @@
                 });
     }
 
-    function onSuccess() {
-            showPopupMessage("Индикатор успешно создан", 'success');
+    function onSuccessOpen() {
+            showPopupMessage("Статус экзамена успешно изменен", 'success');
+        }
+
+        function onSuccessClose() {
+            showPopupMessage("Экзамен успешно закрыт", 'success');
         }
 
          function onError() {
-             showPopupMessage("Индиктор не создан", 'error');
+             showPopupMessage("Ошибка", 'error');
         }
 </script>

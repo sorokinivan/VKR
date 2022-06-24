@@ -1,0 +1,30 @@
+﻿@using Kendo.Mvc.UI
+<script src="~/scripts/commonScripts.js"></script>
+<div>
+    @(Html.Kendo().Grid<VKR.Models.ExamModels.AllResultsModel>()
+    .Name("AllExamsResults")
+    .ToolBar(t => t.Search())
+    .Columns(columns =>
+    {
+    columns.Bound(c=>c.UserId).Visible(false);
+    columns.Bound(c=>c.ExamId).Visible(false);
+    columns.Bound(c => c.UserName).Title("Пользователь");
+    columns.Bound(c => c.ExamName).Title("Название экзамена");
+    columns.Bound(c => c.ExamResult).Title("Сформированность компетенции");
+    })
+    .Search(s => {
+            s.Field(o => o.UserName, "contains");
+            s.Field(o => o.ExamName, "contains");
+    })
+    .DataSource(dataSource => dataSource
+    .Ajax()
+    .Model(model => model.Id(p=>p.UserId))
+    .Model(model => model.Field(p=>p.ExamId))
+    .Model(model => model.Field(p=>p.UserName))
+    .Model(model => model.Field(p=>p.ExamName))
+    .Model(model => model.Field(p=>p.ExamResult))
+    .Read(read => read.Action("GetAllExamsResults", "Exam"))
+    )
+    .Pageable(p => p.Enabled(true))
+    )
+</div>

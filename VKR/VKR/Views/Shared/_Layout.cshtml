@@ -19,6 +19,7 @@
     .header {
         position: sticky;
         top: 0;
+        z-index: 9;
     }
 
     .container {
@@ -98,7 +99,7 @@
 
         /* Change background color of list item when being hovered */
         .dropdown li:hover {
-            background-color: rgba(0, 0, 0, 0.1);
+            background-color: grey;
         }
 
             /* Show the direct sub dropdown when hovering the list item */
@@ -106,69 +107,71 @@
                 display: block;
             }
 
+            .main_menu_text{
+                text-decoration: none;
+                color: black;
+            }
+
+            .liDiv{
+                background-color: white;
+            }
+
 </style>
 <body>
     <header class="header">
         <ul class="dropdown">
-            <li><div><a href="@Url.Action("Index","Home")" class="site_title">Home</a></div></li>
+            <li><div><a class="main_menu_text" href="@Url.Action("Index","Home")" class="site_title">Главная страница</a></div></li>
             @{
                 if (User.Identity.IsAuthenticated)
                 {
                     <li>
-
-                        <div>Экзамены</div>
-                        <!-- First level sub dropdown -->
+                    <div>Экзамены</div>
                     <ul>
-                    <li><div><a href="@Url.Action("Index","Request")" class="site_title">Заявки на экзамены</a></div></li>
-                            <li><div><a href="@Url.Action("FinishedExams","Exam")" class="site_title">Пройденные экзамены</a></div></li>
-                            <li>еу</li>
-                            <li>
-                                <div><a href="@Url.Action("AvailableExams","Exam")" class="site_title">Доступные экзамены</a></div>
-                                <!-- Second level sub dropdown -->
-                            <ul>
-                                    <li>Breadcrumb</li>
-                                    <li>Dropdown</li>
-                                    <li>Menu</li>
-                                    <li>Nested dropdown</li>
-                                </ul>
+                    <li class="liDiv"><div><a class="main_menu_text" href="@Url.Action("Index","Request")" class="site_title">Заявки на экзамены</a></div></li>
+                            <li class="liDiv"><div><a class="main_menu_text" href="@Url.Action("FinishedExams","Exam")" class="site_title">Пройденные экзамены</a></div></li>
+                            <li class="liDiv">
+                                <div><a class="main_menu_text" href="@Url.Action("AvailableExams","Exam")" class="site_title">Доступные экзамены</a></div>
                             </li>
-                            <li>Доступные экзамены</li>
-                            <li>Feedback</li>
                         </ul>
                     </li>
                 }
             }
 
-            <li><div><a href="@Url.Action("Index","News")" class="site_title">Новости</a></div></li>
-            <li>Информация</li>
+            <li><div><a class="main_menu_text" href="@Url.Action("Index","News")" class="site_title">Новости</a></div></li>
+            <li>Информация
+                <ul>
+                    <li class="liDiv"><div><a class="main_menu_text" href="@Url.Action("Faq","Info")" class="site_title">FAQ</a></div></li>
+                        </ul>
+            </li>
             <li>
                 <div>
                     @{
                         if (!User.Identity.IsAuthenticated)
                         {
-                            <a href="@Url.Action("Index","Authorization")" class="site_title">Вход</a>
+                            <a class="main_menu_text" href="@Url.Action("Index","Authorization")" class="site_title">Вход</a>
                         }
                         else
                         {
-                            <a href="@Url.Action("Logout","Authorization")" class="site_title">Выход</a>
+                            <a class="main_menu_text" href="@Url.Action("Logout","Authorization")" class="site_title">Выход</a>
                         }
                     }
                 </div>
             </li>
             @{
-                if (User.Identity.IsAuthenticated)
+                if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                 {
                     <li>
                         Панель администратора
                             <!-- First level sub dropdown -->
                         <ul>
-                        <li><div><a href="@Url.Action("NotCheckedRequests","Request")" class="site_title">Рассмотрение заявок</a></div></li>
-                        <li><div><a href="@Url.Action("ChangeExamsStatuses","Exam")" class="site_title">Активация экзаменов</a></div></li>
-                        <li><div><a href="@Url.Action("AddNews","News")" class="site_title">Добавление новостей</a></div></li>
-                                <li><div><a href="@Url.Action("ExamsCreator","Exam")" class="site_title">Создание экзаменов</a></div></li>
-                                <li><div><a href="@Url.Action("IndicatorsCreator","Exam")" class="site_title">Добавление индикаторов компетенций</a></div></li>
-                                <li><div><a href="@Url.Action("CompetenciesCreator","Exam")" class="site_title">Добавление компетенций</a></div></li>
-                                <li><div><a href="@Url.Action("CompetenciesIndicatorsCreator","Exam")" class="site_title">Добавление индикаторов в компетенцию</a></div></li>
+                        <li class="liDiv"><div><a class="main_menu_text" href="@Url.Action("AllExamsResults","Exam")" class="site_title">Все результаты экзаменов</a></div></li>
+                        <li class="liDiv"><div><a class="main_menu_text" href="@Url.Action("NotCheckedRequests","Request")" class="site_title">Рассмотрение заявок</a></div></li>
+                        <li class="liDiv"><div><a class="main_menu_text" href="@Url.Action("ChangeExamsStatuses","Exam")" class="site_title">Активация экзаменов</a></div></li>
+                        <li class="liDiv"><div><a class="main_menu_text" href="@Url.Action("AddNews","News")" class="site_title">Добавление новостей</a></div></li>
+                                <li class="liDiv"><div><a class="main_menu_text" href="@Url.Action("ExamsCreator","Exam")" class="site_title">Создание экзаменов</a></div></li>
+                                <li class="liDiv"><div><a class="main_menu_text" href="@Url.Action("IndicatorsCreator","Exam")" class="site_title">Добавление индикаторов компетенций</a></div></li>
+                                <li class="liDiv"><div><a class="main_menu_text" href="@Url.Action("CompetenciesCreator","Exam")" class="site_title">Добавление компетенций</a></div></li>
+                                <li class="liDiv"><div><a class="main_menu_text" href="@Url.Action("CompetenciesIndicatorsCreator","Exam")" class="site_title">Добавление индикаторов в компетенцию</a></div></li>
                             </ul>
                     </li>
                 }

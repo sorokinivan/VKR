@@ -49,10 +49,10 @@
     function newCompetencyClick(e){
         var competency = $("#competency").data("kendoDropDownList").value();
         var examName = $('#examName').data('kendoTextBox').value();
-        var threshold = $('#threshold').data('numericTextBox').value();
+        var threshold = $("#threshold").val();
         localStorage.setItem('competencyId', Number(competency));
         localStorage.setItem('examName', examName);
-        localStorage.setItem('threshold', threshold);
+        localStorage.setItem('threshold', Number(threshold));
         window.location.href = '/Exam/ExamQuestionsCreator/';
         //var urlPath = '@Url.Action("ExamQuestionsCreator", "Exam")';
         //var competency = $("#competency").data("kendoDropDownList").value();

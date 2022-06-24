@@ -188,12 +188,13 @@ namespace VKR.Repositories.ProfessionalGrades
             {
                 h = (-p0 * Math.Log(p0, Math.E)) - (p1 * Math.Log(p1, Math.E));
             }
+            var r = 1 - h;
             return new ProfessionalGradeFormationAndEfficiency
             {
                 CompetencyId = competencyId,
-                Formation = h,
-                Efficiency = 1 - h
-            };
+                Formation = Math.Round(h, 2),
+                Efficiency = Math.Round(r, 2)
+        };
         }
 
         private int CalculateProfessionalGrade(ExamResultViewData examResult)
